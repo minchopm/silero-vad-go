@@ -2,7 +2,7 @@ package speech
 
 import (
 	"encoding/binary"
-	"log/slog"
+	"log"
 	"math"
 	"os"
 	"testing"
@@ -127,11 +127,7 @@ func TestSpeechDetection(t *testing.T) {
 		Threshold:  0.5,
 	}
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		AddSource: true,
-		Level:     slog.LevelDebug,
-	}))
-	slog.SetDefault(logger)
+	log.SetFlags(log.LstdFlags | log.Lshortfile) // Configure log to include the source file and line number
 
 	sd, err := NewDetector(cfg)
 	require.NoError(t, err)
