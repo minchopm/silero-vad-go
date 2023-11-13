@@ -7,7 +7,7 @@ import "C"
 
 import (
 	"fmt"
-	"log/slog"
+	"log"
 	"unsafe"
 )
 
@@ -248,7 +248,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 		return nil, fmt.Errorf("not enough samples")
 	}
 
-	slog.Debug("starting speech detection", slog.Int("samplesLen", len(pcm)))
+	log.Printf("starting speech detection, samplesLen: %d", len(pcm))
 
 	minSilenceSamples := sd.cfg.MinSilenceDurationMs * sd.cfg.SampleRate / 1000
 	speechPadSamples := sd.cfg.SpeechPadMs * sd.cfg.SampleRate / 1000
@@ -269,7 +269,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 		if speechProb >= sd.cfg.Threshold && !sd.triggered {
 			sd.triggered = true
 			speechStartAt := (float64(sd.currSample-sd.cfg.WindowSize-speechPadSamples) / float64(sd.cfg.SampleRate))
-			slog.Debug("speech start", slog.Float64("startAt", speechStartAt))
+			log.Printf("speech start, startAt: %f", speechStartAt)
 			segments = append(segments, Segment{
 				SpeechStartAt: speechStartAt,
 			})
@@ -288,7 +288,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 			speechEndAt := (float64(sd.tempEnd+speechPadSamples) / float64(sd.cfg.SampleRate))
 			sd.tempEnd = 0
 			sd.triggered = false
-			slog.Debug("speech end", slog.Float64("endAt", speechEndAt))
+			log.Printf("speech end, endAt: %f", speechEndAt)
 
 			if len(segments) < 1 {
 				return nil, fmt.Errorf("unexpected speech end")
@@ -298,7 +298,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 		}
 	}
 
-	slog.Debug("speech detection done", slog.Int("segmentsLen", len(segments)))
+	log.Printf("speech detection done, segmentsLen: %d", len(segments))
 
 	return segments, nil
 }
