@@ -1,6 +1,6 @@
-module github.com/streamer45/silero-vad-go
+module github.com/minchopm/silero-vad-go
 
-go 1.21.4
+go 1.18
 
 require github.com/stretchr/testify v1.8.4
 
