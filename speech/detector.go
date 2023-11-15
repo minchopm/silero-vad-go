@@ -7,7 +7,7 @@ import "C"
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"unsafe"
 )
 
@@ -141,6 +141,23 @@ func NewDetector(cfg DetectorConfig) (*Detector, error) {
 
 func SetLogLevel(level LogLevel) {
 	C.SetLogLevel(level.toCLogLevel())
+}
+
+func SetLogrusLogLevel(level LogLevel) {
+	switch level {
+	case LogLevelFatal:
+		log.SetLevel(log.FatalLevel)
+	case LogLevelError:
+		log.SetLevel(log.ErrorLevel)
+	case LogLevelWarning:
+		log.SetLevel(log.WarnLevel)
+	case LogLevelInfo:
+		log.SetLevel(log.InfoLevel)
+	case LogLevelVerbose:
+		log.SetLevel(log.DebugLevel) // Assuming verbose is equivalent to debug
+	default:
+		log.SetLevel(log.WarnLevel) // Default level
+	}
 }
 
 func (sd *Detector) ChangeLogLevel(logLevel LogLevel) {
