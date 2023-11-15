@@ -135,6 +135,15 @@ func NewDetector(cfg DetectorConfig) (*Detector, error) {
 	return &sd, nil
 }
 
+func SetLogLevel(level C.OrtLoggingLevel) {
+    C.SetLogLevel(level)
+}
+
+func (sd *Detector) ChangeLogLevel(logLevel int) {
+    // Convert the log level to C.OrtLoggingLevel and call the C function
+    C.SetLogLevel(C.OrtLoggingLevel(logLevel))
+}
+
 func (sd *Detector) infer(pcm []float32) (float32, error) {
 	// Create tensors
 	var pcmValue *C.OrtValue
