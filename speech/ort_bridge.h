@@ -1,3 +1,6 @@
+#ifndef ORT_BRIDGE_H
+#define ORT_BRIDGE_H
+
 #include "onnxruntime_c_api.h"
 
 const OrtApi* OrtGetApi();
@@ -34,3 +37,6 @@ OrtStatus* OrtApiRun(OrtApi* api, OrtSession* session, const OrtRunOptions* run_
 OrtStatus* OrtApiGetTensorMutableData(OrtApi* api, OrtValue* value, void** data);
 
 void SetLogLevel(OrtLoggingLevel level);
+
+
+#endif // ORT_BRIDGE_H
