@@ -1,5 +1,10 @@
 package speech
 
+/*
+#include "ort_bridge.h"
+*/
+import "C"
+
 type LogLevel int
 
 const (
