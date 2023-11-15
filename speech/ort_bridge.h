@@ -31,3 +31,5 @@ OrtStatus* OrtApiRun(OrtApi* api, OrtSession* session, const OrtRunOptions* run_
     const char* const* output_names, size_t output_names_len, OrtValue** outputs);
 
 OrtStatus* OrtApiGetTensorMutableData(OrtApi* api, OrtValue* value, void** data);
+
+void SetLogLevel(OrtLoggingLevel level);
