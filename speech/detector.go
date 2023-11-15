@@ -290,6 +290,10 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 			sd.triggered = false
 			log.Printf("speech end, endAt: %f", speechEndAt)
 
+			segments = append(segments, Segment{
+				SpeechEndAt: speechEndAt,
+			})
+			
 			if len(segments) < 1 {
 				return nil, fmt.Errorf("unexpected speech end")
 			}
