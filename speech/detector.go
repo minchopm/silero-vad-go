@@ -90,7 +90,11 @@ func NewDetector(cfg DetectorConfig) (*Detector, error) {
 		return nil, fmt.Errorf("failed to get API")
 	}
 
-	status := C.OrtApiCreateEnv(sd.api, C.ORT_LOGGING_LEVEL_WARNING, C.CString("vad"), &sd.env)
+	loggerName := C.CString("vad")
+	defer C.free(unsafe.Pointer(loggerName)) // Important to free C string after use
+
+	status := C.OrtApiCreateEnv(sd.api, loggerName, &sd.env)
+
 	defer C.OrtApiReleaseStatus(sd.api, status)
 	if status != nil {
 		return nil, fmt.Errorf("failed to create env: %s", C.GoString(C.OrtApiGetErrorMessage(sd.api, status)))
@@ -136,19 +140,19 @@ func NewDetector(cfg DetectorConfig) (*Detector, error) {
 }
 
 func SetLogLevel(level LogLevel) {
-    C.SetLogLevel(level.toCLogLevel())
+	C.SetLogLevel(level.toCLogLevel())
 }
 
 func (sd *Detector) ChangeLogLevel(logLevel LogLevel) {
-    C.SetLogLevel(logLevel.toCLogLevel())
+	C.SetLogLevel(logLevel.toCLogLevel())
 }
 
 func (sd *Detector) infer(pcm []float32) (float32, error) {
 	// Create tensors
 	var pcmValue *C.OrtValue
-	pcmInputDims := []C.long{
+	pcmInputDims := []C.longlong{
 		1,
-		C.long(len(pcm)),
+		C.longlong(len(pcm)),
 	}
 	status := C.OrtApiCreateTensorWithDataAsOrtValue(sd.api, sd.memoryInfo, unsafe.Pointer(&pcm[0]), C.size_t(len(pcm)*4), &pcmInputDims[0], C.size_t(len(pcmInputDims)), C.ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT, &pcmValue)
 	defer C.OrtApiReleaseStatus(sd.api, status)
@@ -301,7 +305,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 			segments = append(segments, Segment{
 				SpeechEndAt: speechEndAt,
 			})
-			
+
 			if len(segments) < 1 {
 				return nil, fmt.Errorf("unexpected speech end")
 			}
