@@ -146,9 +146,9 @@ func (sd *Detector) ChangeLogLevel(logLevel LogLevel) {
 func (sd *Detector) infer(pcm []float32) (float32, error) {
 	// Create tensors
 	var pcmValue *C.OrtValue
-	pcmInputDims := []C.longlong{
+	pcmInputDims := []C.long{
 		1,
-		C.longlong(len(pcm)),
+		C.long(len(pcm)),
 	}
 	status := C.OrtApiCreateTensorWithDataAsOrtValue(sd.api, sd.memoryInfo, unsafe.Pointer(&pcm[0]), C.size_t(len(pcm)*4), &pcmInputDims[0], C.size_t(len(pcmInputDims)), C.ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT, &pcmValue)
 	defer C.OrtApiReleaseStatus(sd.api, status)
