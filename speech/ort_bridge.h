@@ -6,7 +6,8 @@ const char* OrtApiGetErrorMessage(OrtApi *api, OrtStatus *status);
 
 void OrtApiReleaseStatus(OrtApi *api, OrtStatus *status);
 
-OrtStatus* OrtApiCreateEnv(OrtApi *api, OrtLoggingLevel log_level, const char *log_id, OrtEnv **env);
+OrtStatus* OrtApiCreateEnv(OrtApi* api, const char* log_id, OrtEnv** env);
+
 void OrtApiReleaseEnv(OrtApi *api, OrtEnv *env);
 
 OrtStatus* OrtApiCreateSessionOptions(OrtApi* api, OrtSessionOptions** opts);
