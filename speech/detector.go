@@ -11,6 +11,8 @@ import (
 	"unsafe"
 )
 
+var logger = log.New()
+
 const (
 	hcLen = 2 * 1 * 64
 )
@@ -146,17 +148,17 @@ func SetLogLevel(level LogLevel) {
 func SetLogrusLogLevel(level LogLevel) {
 	switch level {
 	case LogLevelFatal:
-		log.SetLevel(log.FatalLevel)
+		logger.SetLevel(log.FatalLevel)
 	case LogLevelError:
-		log.SetLevel(log.ErrorLevel)
+		logger.SetLevel(log.ErrorLevel)
 	case LogLevelWarning:
-		log.SetLevel(log.WarnLevel)
+		logger.SetLevel(log.WarnLevel)
 	case LogLevelInfo:
-		log.SetLevel(log.InfoLevel)
+		logger.SetLevel(log.InfoLevel)
 	case LogLevelVerbose:
-		log.SetLevel(log.DebugLevel) // Assuming verbose is equivalent to debug
+		logger.SetLevel(log.DebugLevel) // Assuming verbose is equivalent to debug
 	default:
-		log.SetLevel(log.WarnLevel) // Default level
+		logger.SetLevel(log.WarnLevel) // Default level
 	}
 }
 
@@ -277,7 +279,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 		return nil, fmt.Errorf("not enough samples")
 	}
 
-	log.Printf("starting speech detection, samplesLen: %d", len(pcm))
+	logger.Printf("starting speech detection, samplesLen: %d", len(pcm))
 
 	minSilenceSamples := sd.cfg.MinSilenceDurationMs * sd.cfg.SampleRate / 1000
 	speechPadSamples := sd.cfg.SpeechPadMs * sd.cfg.SampleRate / 1000
@@ -298,7 +300,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 		if speechProb >= sd.cfg.Threshold && !sd.triggered {
 			sd.triggered = true
 			speechStartAt := (float64(sd.currSample-sd.cfg.WindowSize-speechPadSamples) / float64(sd.cfg.SampleRate))
-			log.Printf("speech start, startAt: %f", speechStartAt)
+			logger.Printf("speech start, startAt: %f", speechStartAt)
 			segments = append(segments, Segment{
 				SpeechStartAt: speechStartAt,
 			})
@@ -317,7 +319,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 			speechEndAt := (float64(sd.tempEnd+speechPadSamples) / float64(sd.cfg.SampleRate))
 			sd.tempEnd = 0
 			sd.triggered = false
-			log.Printf("speech end, endAt: %f", speechEndAt)
+			logger.Printf("speech end, endAt: %f", speechEndAt)
 
 			segments = append(segments, Segment{
 				SpeechEndAt: speechEndAt,
@@ -331,7 +333,7 @@ func (sd *Detector) Detect(pcm []float32) ([]Segment, error) {
 		}
 	}
 
-	log.Printf("speech detection done, segmentsLen: %d", len(segments))
+	logger.Printf("speech detection done, segmentsLen: %d", len(segments))
 
 	return segments, nil
 }
