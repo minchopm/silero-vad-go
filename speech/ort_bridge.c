@@ -18,8 +18,14 @@ const char* OrtApiGetErrorMessage(OrtApi* api, OrtStatus* status) {
   return api->GetErrorMessage(status);
 }
 
-OrtStatus* OrtApiCreateEnv(OrtApi* api, OrtLoggingLevel log_level, const char* log_id, OrtEnv** env) {
-  return api->CreateEnv(log_level, log_id, env);
+static OrtLoggingLevel current_log_level = ORT_LOGGING_LEVEL_WARNING; // Default level
+
+void SetLogLevel(OrtLoggingLevel level) {
+    current_log_level = level;
+}
+
+OrtStatus* OrtApiCreateEnv(OrtApi* api, const char* log_id, OrtEnv** env) {
+    return api->CreateEnv(current_log_level, log_id, env);
 }
 
 void OrtApiReleaseEnv(OrtApi* api, OrtEnv* env) {
